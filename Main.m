@@ -97,16 +97,96 @@ L2 = huffman(prob);
 
 %% Part 2
 
-Image = imread('baboon.png');
-Image = double(Image);
-H = zeros(size(Image(:,:)));
+Image = imread('boat.png');
+Image = double(Image)+1;
+
+%%
+H = zeros(size(Image));
+count = 0;
+
+
 for i = 1:512
-    for j = 1:512-1
-        H(Image(i,j),Image(i+1,j+1)) = H(Image(i,j),Image(i+1,j+1))+1;
+    for j = 1:512
+       H(Image(i,j),Image(i,j)) = H(Image(i,j),Image(i,j))+1;
     end
 end
 
+prob = H./((512*512)+count);
 
+sum(sum(prob))
+logVec2 = zeros(size(Image));
+for i = 1:512
+    for j = 1:512
+       if prob(i,j) ~= 0
+            logVec2(i,j) = -sum(prob(i,j)).*log2(prob(i,j));
+       else
+            logVec2(i,j) = 0;
+       end
+    end
+end
+entro = sum(sum(logVec2));
+
+%%
+
+
+H = zeros(size(Image));
+for i = 1:512
+    for j = 1:512
+       if i+1 == 513
+           H(Image(i,j),Image(i,j)) = H(Image(i,j),Image(i,j))+1;
+       else
+           H(Image(i,j),Image(i+1,j)) = H(Image(i,j),Image(i+1,j))+1;
+       end
+    end
+end
+
+prob = H./(512*512);
+
+sum(sum(prob))
+
+logVec2 = zeros(size(Image));
+for i = 1:512
+    for j =1:512
+       if prob(i,j) ~= 0
+            logVec2(i,j) = -sum(prob(i,j)).*log2(prob(i,j));
+       else
+            logVec2(i,j) = 0;
+       end
+    end
+end
+entro2 = sum(sum(logVec2));
+%%
+
+H = zeros(size(Image));
+for i = 1:512
+    for j = 1:512
+       if j+1 == 513
+           H(Image(i,j),Image(i,j)) = H(Image(i,j),Image(i,j))+1;
+       else
+           H(Image(i,j),Image(i,j+1)) = H(Image(i,j),Image(i,j+1))+1;
+       end
+    end
+end
+
+prob = H./(512*512);
+
+sum(sum(prob))
+
+logVec2 = zeros(size(Image));
+for i = 1:512
+    for j =1:512
+       if prob(i,j) ~= 0
+            logVec2(i,j) = -sum(prob(i,j)).*log2(prob(i,j));
+       else
+            logVec2(i,j) = 0;
+       end
+    end
+end
+entro3 = sum(sum(logVec2));
+%%
+betEntro1 = entro2 -entro;
+betEntro2 = entro3 -entro;
+%%Huffman del 2
 
 
 
