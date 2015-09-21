@@ -97,6 +97,14 @@ L2 = huffman(prob);
 
 %% Part 2
 
+Image = imread('baboon.png');
+Image = double(Image);
+H = zeros(size(Image(:,:)));
+for i = 1:512
+    for j = 1:512-1
+        H(Image(i,j),Image(i+1,j+1)) = H(Image(i,j),Image(i+1,j+1))+1;
+    end
+end
 
 
 
