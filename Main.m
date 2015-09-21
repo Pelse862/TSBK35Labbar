@@ -186,7 +186,60 @@ entro3 = sum(sum(logVec2));
 %%
 betEntro1 = entro2 -entro;
 betEntro2 = entro3 -entro;
+
+%%
+Image = imread('boat.png');
+Image = double(Image)+1;
+vecPad = zeros(512,1);
+vecPad(:,1) = 128;
+Image = [Image vecPad; vecPad' 128];
+ %%
 %%Huffman del 2
 
+P = zeros(size(Image));
+
+P(:,1) = 128;
+
+P(2:length(P),:) = Image(1:512,:);
+
+Y = Image - P;
+c = histc(Y,min(Y):max(Y));
+
+prob3 = c./(513*513);
+L = sum(huffman(prob3));
+
+%%
+P = zeros(size(Image));
+
+P(1,:) = 128;
+
+P(:,2:length(P)) = Image(:,1:512);
+
+Y = Image - P;
+c = histc(Y,min(Y):max(Y));
+
+prob3 = c./(512*512);
+L = sum(huffman(prob3));
+
+%%
+P = zeros(size(Image));
+P1 = zeros(size(Image));
+P2 = zeros(size(Image));
 
 
+P(:,1) = 0;
+P(2:length(P),:) = Image(1:512,:);
+
+P1(1,:) = 0;
+P1(:,2:length(P)) = Image(:,1:512);
+
+P3(1,:) = 0;
+P3(:,1) = 0;
+P3(2:length(P),2:length(P)) = Image(1:512,1:512);
+P4 = P3+P-P1;
+
+Y = Image - P4;
+c = histc(Y,min(Y):max(Y));
+
+prob3 = c./(512*512);
+L = sum(huffman(prob3));
