@@ -1,6 +1,5 @@
 
 %% Entropi ljud
-frequenzy = 44100;
 
 [audioVec, f] = audioread('hey.wav');
 
@@ -19,23 +18,18 @@ prob = H./k;
 logVec = zeros(256,1);
 for i = 1:256
    if prob(i) ~= 0
-        logVec(i) = -sum(prob(i)).*log2(prob(i));
+        logVec(i) = -prob(i).*log2(prob(i));
    else
         logVec(i) = 0;
    end
 end
+entro = sum(logVec);
 
-if(f == 44100)
-    
-    entro = sum(logVec);
-else
-    entro = sum(logVec);
-end
 
 %%  kolla på hur ofta paren uppstår i signalen istället för hur ofta karaktär speciell uppstår
 
 H = zeros(256,256);
-l = 12;
+
 %kollar alla möjliga kombinationer av värdena, ex (0,0) mot hela vektorn
 for i = 1:(max(size(audioVec))-1)
    H(audioVec(i),audioVec(i+1)) = H(audioVec(i),audioVec(i+1))+1;
@@ -47,7 +41,7 @@ logVec2 = zeros(256,256);
 
 
 for i = 1:256
-    for l3 = 2:256
+    for l3 = 1:256
        if prob2(i,l3) ~= 0
             logVec2(i,l3) = -sum(prob2(i,l3)).*log2(prob2(i,l3));
        else
@@ -55,13 +49,8 @@ for i = 1:256
        end
     end
 end
-
-if(f == 44100)
     
     entro2 = sum(sum(logVec2));
-else
-    entro2 = sum(sum(logVec2));
-end
 
 %%betinget parentropen - minnesfri entropi = betingad entropi
 
@@ -77,7 +66,7 @@ P(1,1) = 0;
 P(2:length(P),1) = audioVec(1:k-1,1);
 
 Y = audioVec - P;
-c = histc(Y,min(Y):max(Y));
+c = hist(Y,min(Y):max(Y));
 
 prob = c./k;
 L = huffman(prob);
@@ -90,7 +79,7 @@ P2(2,1) = 0;
 P2(3:length(P),1) = audioVec(1:k-2,1);
 
 Y = audioVec - 2*P+P2;
-c = histc(Y,min(Y):max(Y));
+c = hist(Y,min(Y):max(Y));
 
 prob = c./k;
 L2 = huffman(prob);
@@ -113,6 +102,7 @@ end
 
 prob = H./((512*512)+count);
 
+
 sum(sum(prob))
 logVec2 = zeros(size(Image));
 for i = 1:512
@@ -124,6 +114,7 @@ for i = 1:512
        end
     end
 end
+
 entro = sum(sum(logVec2));
 
 %%
@@ -133,7 +124,7 @@ H = zeros(size(Image));
 for i = 1:512
     for j = 1:512
        if i+1 == 513
-           H(Image(i,j),Image(i,j)) = H(Image(i,j),Image(i,j))+1;
+          % H(Image(i,j),Image(i,j)) = H(Image(i,j),Image(i,j))+1;
        else
            H(Image(i,j),Image(i+1,j)) = H(Image(i,j),Image(i+1,j))+1;
        end
@@ -183,6 +174,7 @@ for i = 1:512
     end
 end
 entro3 = sum(sum(logVec2));
+
 %%
 betEntro1 = entro2 -entro;
 betEntro2 = entro3 -entro;
@@ -195,7 +187,12 @@ vecPad(:,1) = 128;
 Image = [Image vecPad; vecPad' 128];
  %%
 %%Huffman del 2
+Y = Image;
+c = histc(Y,min(Y):max(Y));
 
+prob3 = c./(512*512);
+L = sum(huffman(prob3));
+%%
 P = zeros(size(Image));
 
 P(:,:) = 128;
@@ -205,7 +202,7 @@ P(2:length(P),:) = Image(1:512,:);
 Y = Image - P;
 c = histc(Y,min(Y):max(Y));
 
-prob3 = c./(513*513);
+prob3 = c./(512*512);
 L = sum(huffman(prob3));
 
 %%
